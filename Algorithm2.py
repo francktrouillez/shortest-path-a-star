@@ -34,8 +34,8 @@ class Algorithm:
         self.done = False
         self.cost = 0
 
-        self.solve()
-        #self.solve_bidirectional()
+        #self.solve()
+        self.solve_bidirectional()
 
 
         print("Solution found")
@@ -184,7 +184,7 @@ class Algorithm:
                 save_path_other = save_path_1
                 toReach = start
             current = heapq.heappop(q)
-            if current[1] == toReach or current[1] in save_path_other:
+            if current[1] == toReach:
                 self.path = current[2] + save_path_other[current[1]]
                 self.cost = g_scores[current[1]] + g_scores_other[current[1]]
                 print(self.cost)
@@ -202,9 +202,16 @@ class Algorithm:
                     save_path[n] = current[2] + [n]
                     heapq.heappush(q, (f, n, current[2] + [n]))
                     edge_history.append(((current[1], n), self.COLOR_EXPLORED))
-                    if (n != goal):
+                    if (n != toReach):
                         vertex_history.append((n, self.COLOR_NEIGHBOURED))
                     g_scores[n] = g
+                    if (n in save_path_other):
+                        self.path = current[2] + [n] + save_path_other[n]
+                        self.cost = g_scores[n] + g_scores_other[n]
+                        print(self.cost)
+                        self.history.append((True, edge_history))
+                        self.history.append((False, vertex_history))
+                        return
             self.history.append((True, edge_history))
             self.history.append((False, vertex_history))
             isFirst = not isFirst

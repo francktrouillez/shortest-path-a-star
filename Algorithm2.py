@@ -6,6 +6,7 @@ import heapq
 
 class Algorithm:
 
+    COLOR_NEIGHBOURED = "#85fc23"
     COLOR_EXPLORED = "#65d6d2"
     COLOR_SRC = "green"
     COLOR_DST = "red"
@@ -31,8 +32,11 @@ class Algorithm:
         self.history = []
         self.path = []
         self.done = False
+        self.cost = 0
 
         self.solve()
+        #self.solve_bidirectional()
+
 
         print("Solution found")
 
@@ -90,13 +94,12 @@ class Algorithm:
                 dst = self.path[i+1]
                 self.set_edge_color(src, dst, self.COLOR_PATH)
                 self.set_node_color(dst,  self.COLOR_PATH)
-            self.set_edge_color(self.path[len(self.path)-2], 1,  self.COLOR_PATH)
+            self.set_edge_color(self.path[len(self.path)-2], self.path[len(self.path)-1],  self.COLOR_PATH)
             return False
         current_history = self.history[self.counter_history]
         if (current_history[0]): #edges animation
             current_history = current_history[1]
             for e in current_history:
-                print(e)
                 self.set_edge_color(e[0][0], e[0][1], e[1])
         else: #Vertex animation
             current_history = current_history[1]
@@ -121,9 +124,13 @@ class Algorithm:
             current = heapq.heappop(q)
             if current[1] == goal:
                 self.path = current[2]
+                self.cost = g_scores[current[1]]
+                print(self.cost)
                 break
             edge_history = []
             vertex_history = []
+            if (current[1] != start and current[1] != goal):
+                vertex_history.append((current[1], self.COLOR_EXPLORED))
             neighbour = self.get_neighbors(current[1])
             for n in neighbour[0]:
                 edge = self.get_edge(current[1], n)
@@ -133,10 +140,74 @@ class Algorithm:
                     heapq.heappush(q, (f, n, current[2] + [n]))
                     edge_history.append(((current[1], n), self.COLOR_EXPLORED))
                     if (n != goal):
-                        vertex_history.append((n, self.COLOR_EXPLORED))
+                        vertex_history.append((n, self.COLOR_NEIGHBOURED))
                     g_scores[n] = g
             self.history.append((True, edge_history))
             self.history.append((False, vertex_history))
+
+
+    def solve_bidirectional(self):
+        start = 0
+        goal = 1
+        q1 = [(0, start, [start])]
+        q2 = [(0, goal, [goal])]
+        heapq.heapify(q1)
+        heapq.heapify(q2)
+
+
+        self.history = []
+
+        self.path = []
+
+        g_scores_1 = {start: 0}
+        g_scores_2 = {goal: 0}
+        save_path_1 = {start : []}
+        save_path_2 = {goal : []}
+
+
+        isFirst = True
+        q = q1
+
+        while len(q) != 0:
+            if (isFirst):
+                q = q1
+                g_scores = g_scores_1
+                g_scores_other = g_scores_2
+                save_path = save_path_1
+                save_path_other = save_path_2
+                toReach = goal
+            else:
+                q = q2
+                g_scores = g_scores_2
+                g_scores_other = g_scores_1
+                save_path = save_path_2
+                save_path_other = save_path_1
+                toReach = start
+            current = heapq.heappop(q)
+            if current[1] == toReach or current[1] in save_path_other:
+                self.path = current[2] + save_path_other[current[1]]
+                self.cost = g_scores[current[1]] + g_scores_other[current[1]]
+                print(self.cost)
+                break
+            edge_history = []
+            vertex_history = []
+            if (current[1] != start and current[1] != goal):
+                vertex_history.append((current[1], self.COLOR_EXPLORED))
+            neighbour = self.get_neighbors(current[1])
+            for n in neighbour[0]:
+                edge = self.get_edge(current[1], n)
+                g = g_scores[current[1]] + edge[2] #weight
+                f = g + self.heuristic(n, goal)
+                if n not in g_scores or g < g_scores[n]:
+                    save_path[n] = current[2] + [n]
+                    heapq.heappush(q, (f, n, current[2] + [n]))
+                    edge_history.append(((current[1], n), self.COLOR_EXPLORED))
+                    if (n != goal):
+                        vertex_history.append((n, self.COLOR_NEIGHBOURED))
+                    g_scores[n] = g
+            self.history.append((True, edge_history))
+            self.history.append((False, vertex_history))
+            isFirst = not isFirst
 
     def heuristic(self, a, b):
         node_a = self.get_vertex(a)

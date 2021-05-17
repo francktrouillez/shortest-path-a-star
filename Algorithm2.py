@@ -37,10 +37,6 @@ class Algorithm:
         #self.solve()
         self.solve_bidirectional()
 
-
-        print("Solution found")
-
-
         self.view = View(self, label_edges=True, speed=500)
 
     def get_edges(self):
@@ -146,6 +142,9 @@ class Algorithm:
             self.history.append((False, vertex_history))
         if (len(self.path) == 0) :
             print("No solution")
+        else:
+            print("Solution found")
+
 
     def solve_bidirectional(self):
         start = 0
@@ -214,12 +213,15 @@ class Algorithm:
                         print("Cost of best path : "+str(self.cost))
                         self.history.append((True, edge_history))
                         self.history.append((False, vertex_history))
+                        print("Solution found")
                         return
             self.history.append((True, edge_history))
             self.history.append((False, vertex_history))
             isFirst = not isFirst
         if (len(self.path) == 0) :
             print("No solution")
+        else :
+            print("Solution found")
 
     def heuristic(self, a, b):
         node_a = self.get_vertex(a)

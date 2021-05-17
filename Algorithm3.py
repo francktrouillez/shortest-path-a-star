@@ -125,7 +125,7 @@ class Algorithm:
             if current[1] == goal:
                 self.path = current[2]
                 self.cost = g_scores[current[1]]
-                print(self.cost)
+                print("Cost of best path : "+str(self.cost))
                 break
             edge_history = []
             vertex_history = []
@@ -144,7 +144,8 @@ class Algorithm:
                     g_scores[n] = g
             self.history.append((True, edge_history))
             self.history.append((False, vertex_history))
-
+        if (len(self.path) == 0) :
+            print("No solution")
 
     def solve_bidirectional(self):
         start = 0
@@ -185,9 +186,10 @@ class Algorithm:
                 toReach = start
             current = heapq.heappop(q)
             if current[1] == toReach:
+                save_path_other[current[1]].reverse()
                 self.path = current[2] + save_path_other[current[1]]
                 self.cost = g_scores[current[1]] + g_scores_other[current[1]]
-                print(self.cost)
+                print("Cost of best path : "+str(self.cost))
                 break
             edge_history = []
             vertex_history = []
@@ -206,15 +208,18 @@ class Algorithm:
                         vertex_history.append((n, self.COLOR_NEIGHBOURED))
                     g_scores[n] = g
                     if (n in save_path_other):
-                        self.path = current[2] + [n] + save_path_other[n]
+                        save_path_other[n].reverse()
+                        self.path = current[2] + save_path_other[n]
                         self.cost = g_scores[n] + g_scores_other[n]
-                        print(self.cost)
+                        print("Cost of best path : "+str(self.cost))
                         self.history.append((True, edge_history))
                         self.history.append((False, vertex_history))
                         return
             self.history.append((True, edge_history))
             self.history.append((False, vertex_history))
             isFirst = not isFirst
+        if (len(self.path) == 0) :
+            print("No solution")
 
     def heuristic(self, a, b):
         node_a = self.get_vertex(a)

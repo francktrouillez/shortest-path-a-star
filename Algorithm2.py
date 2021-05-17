@@ -11,6 +11,7 @@ class Algorithm:
     COLOR_SRC = "green"
     COLOR_DST = "red"
     COLOR_PATH = "#ffb700"
+    COLOR_BIDIRECTIONAL = "#a834eb"
 
 
     def __init__(self, dataset):
@@ -33,11 +34,18 @@ class Algorithm:
         self.path = []
         self.done = False
         self.cost = 0
+        self.iteration = 0
 
         #self.solve()
         self.solve_bidirectional()
 
         self.view = View(self, label_edges=True, speed=500)
+
+    def get_remaining_counter(self):
+        return len(self.history) - self.counter_history + 1
+
+    def get_iteration(self):
+        return self.iteration
 
     def get_edges(self):
         return self.edges
@@ -95,6 +103,7 @@ class Algorithm:
         current_history = self.history[self.counter_history]
         if (current_history[0]): #edges animation
             current_history = current_history[1]
+            self.iteration += 1
             for e in current_history:
                 self.set_edge_color(e[0][0], e[0][1], e[1])
         else: #Vertex animation
@@ -203,18 +212,20 @@ class Algorithm:
                     save_path[n] = current[2] + [n]
                     heapq.heappush(q, (f, n, current[2] + [n]))
                     edge_history.append(((current[1], n), self.COLOR_EXPLORED))
-                    if (n != toReach):
-                        vertex_history.append((n, self.COLOR_NEIGHBOURED))
+                    
                     g_scores[n] = g
                     if (n in save_path_other):
                         save_path_other[n].reverse()
                         self.path = current[2] + save_path_other[n]
                         self.cost = g_scores[n] + g_scores_other[n]
+                        vertex_history.append((n, self.COLOR_BIDIRECTIONAL))
                         print("Cost of best path : "+str(self.cost))
                         self.history.append((True, edge_history))
                         self.history.append((False, vertex_history))
                         print("Solution found")
                         return
+                    if (n != toReach):
+                        vertex_history.append((n, self.COLOR_NEIGHBOURED))
             self.history.append((True, edge_history))
             self.history.append((False, vertex_history))
             isFirst = not isFirst

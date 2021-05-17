@@ -202,7 +202,7 @@ class Algorithm:
                     save_path[n] = current[2] + [n]
                     heapq.heappush(q, (f, n, current[2] + [n]))
                     edge_history.append(((current[1], n), self.COLOR_EXPLORED))
-                    if (n != goal):
+                    if (n != toReach):
                         vertex_history.append((n, self.COLOR_NEIGHBOURED))
                     g_scores[n] = g
             self.history.append((True, edge_history))

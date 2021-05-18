@@ -42,8 +42,6 @@ class View:
         self.ax.clear()
         plt.clf()
         plt.cla()
-        if (self.algorithm.update()):
-            return
         for v in range(len(self.algorithm.get_vertices())):
             self.G.add_node(v, pos=self.algorithm.get_vertices()[v])
         for e in self.algorithm.get_edges():

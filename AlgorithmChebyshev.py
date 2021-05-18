@@ -36,8 +36,8 @@ class Algorithm:
         self.cost = 0
         self.iteration = 0
 
-        self.solve()
-        #self.solve_bidirectional()
+        #self.solve()
+        self.solve_bidirectional()
 
         self.view = View(self, label_edges=True, speed=500)
 

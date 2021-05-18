@@ -14,7 +14,7 @@ class Algorithm:
     COLOR_BIDIRECTIONAL = "#a834eb"
 
 
-    def __init__(self, dataset):
+    def __init__(self, dataset, is_bidirectional):
         fh = FileHandler(dataset)
         self.E, self.V, self.vertices, self.edges, self.edge_index, self.nodes = fh.read()
         # E is total number of edges
@@ -36,8 +36,10 @@ class Algorithm:
         self.cost = 0
         self.iteration = 0
 
-        #self.solve()
-        self.solve_bidirectional()
+        if(not is_bidirectional):
+            self.solve()
+        else:
+            self.solve_bidirectional()
 
         self.view = View(self, label_edges=True, speed=500)
 

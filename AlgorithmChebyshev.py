@@ -36,8 +36,8 @@ class Algorithm:
         self.cost = 0
         self.iteration = 0
 
-        #self.solve()
-        self.solve_bidirectional()
+        self.solve()
+        #self.solve_bidirectional()
 
         self.view = View(self, label_edges=True, speed=500)
 
@@ -146,6 +146,13 @@ class Algorithm:
                     edge_history.append(((current[1], n), self.COLOR_EXPLORED))
                     if (n != goal):
                         vertex_history.append((n, self.COLOR_NEIGHBOURED))
+                    else:
+                        self.path = current[2] + [n] 
+                        self.cost = g
+                        print("Cost of best path : "+str(self.cost))
+                        self.history.append((True, edge_history))
+                        self.history.append((False, vertex_history))
+                        return
                     g_scores[n] = g
             self.history.append((True, edge_history))
             self.history.append((False, vertex_history))
@@ -237,8 +244,10 @@ class Algorithm:
     def heuristic(self, a, b):
         node_a = self.get_vertex(a)
         node_b = self.get_vertex(b)
+        dx = abs(node_a[0] - node_b[0])
+        dy = abs(node_a[1] - node_b[1])
         #Compute heuristic
 
 
-        return abs(node_a[0] - node_b[0]) + abs(node_a[1] - node_b[1])
+        return (dx + dy) - min(dx, dy)
 

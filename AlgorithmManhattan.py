@@ -146,6 +146,13 @@ class Algorithm:
                     edge_history.append(((current[1], n), self.COLOR_EXPLORED))
                     if (n != goal):
                         vertex_history.append((n, self.COLOR_NEIGHBOURED))
+                    else:
+                        self.path = current[2] + [n] 
+                        self.cost = g
+                        print("Cost of best path : "+str(self.cost))
+                        self.history.append((True, edge_history))
+                        self.history.append((False, vertex_history))
+                        return
                     g_scores[n] = g
             self.history.append((True, edge_history))
             self.history.append((False, vertex_history))

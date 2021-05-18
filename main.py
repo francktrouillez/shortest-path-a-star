@@ -5,4 +5,4 @@ from AlgorithmChebyshev import Algorithm
 
 
 if __name__ == "__main__":
-    algorithm = Algorithm("datasets/example", True)
+    algorithm = Algorithm("datasets/example40", True)

@@ -18,7 +18,8 @@ class View:
             self.G.add_node(v, pos=self.algorithm.get_vertices()[v])
         for e in self.algorithm.get_edges():
             self.G.add_edge(e[0], e[1], color=e[3], weight=e[2])
-        self.pos = nx.spring_layout(self.G, pos=self.algorithm.get_vertices(), fixed=self.algorithm.get_vertices())
+        if (len(self.algorithm.get_vertices()) <= 100):
+            self.pos = nx.spring_layout(self.G, pos=self.algorithm.get_vertices(), fixed=self.algorithm.get_vertices())
         self.is_playing = False
         self.is_thread_alive = False
         self.init_graph()
@@ -52,8 +53,17 @@ class View:
         for node in self.G:
             node_colors.append(self.algorithm.get_neighbors(counter)[1])
             counter += 1
-        nx.draw(self.G, nx.get_node_attributes(self.G, 'pos'), with_labels=True, node_color=node_colors,
-                node_size=500, width=3, edge_color=edge_colors)
+
+        if (len(self.algorithm.get_vertices()) > 100):
+            self.label_edges = False
+
+        self.sizeOfNodes = max(min(500, 550-len(self.algorithm.get_vertices())), 10)
+        self.showNodeLabels = True
+        if (self.sizeOfNodes < 50):
+            self.showNodeLabels = False
+
+        nx.draw(self.G, nx.get_node_attributes(self.G, 'pos'), with_labels=self.showNodeLabels, node_color=node_colors,
+                node_size=self.sizeOfNodes, width=3, edge_color=edge_colors)
         if self.label_edges:
             edge_labels = dict([((u, v,), d['weight'])
                                 for u, v, d in self.G.edges(data=True)])
@@ -76,8 +86,8 @@ class View:
             for node in self.G:
                 node_colors.append(self.algorithm.get_neighbors(counter)[1])
                 counter += 1
-            nx.draw(self.G, nx.get_node_attributes(self.G, 'pos'), with_labels=True, node_color=node_colors,
-                    node_size=500, width=3, edge_color=edge_colors)
+            nx.draw(self.G, nx.get_node_attributes(self.G, 'pos'), with_labels=self.showNodeLabels, node_color=node_colors,
+                    node_size=self.sizeOfNodes, width=3, edge_color=edge_colors)
             if self.label_edges:
                 edge_labels = dict([((u, v,), d['weight'])
                                     for u, v, d in self.G.edges(data=True)])

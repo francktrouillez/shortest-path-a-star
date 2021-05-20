@@ -5,6 +5,6 @@ from AlgorithmEuclidian import Algorithm
 
 
 if __name__ == "__main__":
-    #algorithm = Algorithm("datasets/example", True)
-    algorithm = Algorithm("testInstance.txt", False)
+    algorithm = Algorithm("datasets/1118_nodes", True)
+    #algorithm = Algorithm("testInstance.txt", True)
 

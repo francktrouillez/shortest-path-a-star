@@ -12,7 +12,7 @@ class Algorithm:
     COLOR_DST = "red"
     COLOR_PATH = "#ffb700"
     COLOR_BIDIRECTIONAL = "#a834eb"
-    COLOR_CURRENT = "#ff0084"
+    COLOR_CURRENT = "#ff9d00"
 
 
     def __init__(self, dataset, is_bidirectional):

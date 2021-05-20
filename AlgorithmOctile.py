@@ -12,7 +12,7 @@ class Algorithm:
     COLOR_DST = "red"
     COLOR_PATH = "#ffb700"
     COLOR_BIDIRECTIONAL = "#a834eb"
-    COLOR_CURRENT = "#ff0084"
+    COLOR_CURRENT = "#ff9d00"
 
 
     CONSTANT_OCTILE = 2**(1/2) - 2

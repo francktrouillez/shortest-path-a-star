@@ -18,7 +18,8 @@ class View:
             self.G.add_node(v, pos=self.algorithm.get_vertices()[v])
         for e in self.algorithm.get_edges():
             self.G.add_edge(e[0], e[1], color=e[3], weight=e[2])
-        self.pos = nx.spring_layout(self.G, pos=self.algorithm.get_vertices(), fixed=self.algorithm.get_vertices())
+        if (len(self.algorithm.get_vertices()) <= 100):
+            self.pos = nx.spring_layout(self.G, pos=self.algorithm.get_vertices(), fixed=self.algorithm.get_vertices())
         self.is_playing = False
         self.is_thread_alive = False
         self.init_graph()
@@ -32,11 +33,11 @@ class View:
             text_iteration = "Iteration : "+str(self.algorithm.get_iteration())
         else:
             text_iteration = ""
-        self.iterations_label = plt.text(-5,0.2, text_iteration)
+        self.iterations_label = plt.text(-8,0.2, text_iteration)
         if (self.is_playing):
-            self.state_run = plt.text(-2,0.2, "Playing")
+            self.state_run = plt.text(-4,0.2, "Playing")
         else:
-            self.state_run = plt.text(-2,0.2, "Paused")
+            self.state_run = plt.text(-4,0.2, "Paused")
 
     def init_graph(self):
         self.ax.clear()
@@ -52,8 +53,17 @@ class View:
         for node in self.G:
             node_colors.append(self.algorithm.get_neighbors(counter)[1])
             counter += 1
-        nx.draw(self.G, nx.get_node_attributes(self.G, 'pos'), with_labels=True, node_color=node_colors,
-                node_size=500, width=3, edge_color=edge_colors)
+
+        if (len(self.algorithm.get_vertices()) > 100):
+            self.label_edges = False
+
+        self.sizeOfNodes = max(min(500, 550-len(self.algorithm.get_vertices())), 10)
+        self.showNodeLabels = True
+        if (self.sizeOfNodes < 50):
+            self.showNodeLabels = False
+
+        nx.draw(self.G, nx.get_node_attributes(self.G, 'pos'), with_labels=self.showNodeLabels, node_color=node_colors,
+                node_size=self.sizeOfNodes, width=3, edge_color=edge_colors)
         if self.label_edges:
             edge_labels = dict([((u, v,), d['weight'])
                                 for u, v, d in self.G.edges(data=True)])
@@ -76,8 +86,8 @@ class View:
             for node in self.G:
                 node_colors.append(self.algorithm.get_neighbors(counter)[1])
                 counter += 1
-            nx.draw(self.G, nx.get_node_attributes(self.G, 'pos'), with_labels=True, node_color=node_colors,
-                    node_size=500, width=3, edge_color=edge_colors)
+            nx.draw(self.G, nx.get_node_attributes(self.G, 'pos'), with_labels=self.showNodeLabels, node_color=node_colors,
+                    node_size=self.sizeOfNodes, width=3, edge_color=edge_colors)
             if self.label_edges:
                 edge_labels = dict([((u, v,), d['weight'])
                                     for u, v, d in self.G.edges(data=True)])
@@ -109,12 +119,22 @@ class View:
         def next(event):
             animate()
             plt.show()
+
+        def end(event):
+            self.is_playing = False
+            while(not self.algorithm.update()):
+                pass
+            animate()
+            plt.show()
         
-        self.button_play = widgets.Button(plt.axes([0.8,0,0.1,0.05]), "Play")
-        self.button_pause = widgets.Button(plt.axes([0.9,0,0.1,0.05]), "Pause")
-        self.button_next = widgets.Button(plt.axes([0.7,0,0.1,0.05]), "Next")
+        self.button_play = widgets.Button(plt.axes([0.7,0,0.1,0.05]), "Play")
+        self.button_pause = widgets.Button(plt.axes([0.8,0,0.1,0.05]), "Pause")
+        self.button_next = widgets.Button(plt.axes([0.6,0,0.1,0.05]), "Next")
+        self.button_end = widgets.Button(plt.axes([0.9,0,0.1,0.05]), "End")
+
 
         self.button_play.on_clicked(play)
         self.button_pause.on_clicked(pause)
         self.button_next.on_clicked(next)
+        self.button_end.on_clicked(end)
 

@@ -12,6 +12,8 @@ class Algorithm:
     COLOR_DST = "red"
     COLOR_PATH = "#ffb700"
     COLOR_BIDIRECTIONAL = "#a834eb"
+    COLOR_CURRENT = "#ff9d00"
+
 
     CONSTANT_OCTILE = 2**(1/2) - 2
 
@@ -94,27 +96,32 @@ class Algorithm:
         updated constantly during each refresh of the view
         :return: void
         """
-        if (self.done):
+        if (self.counter_history > len(self.history)):
             return True
-        if (self.counter_history >= len(self.history)):
+        if (self.counter_history == len(self.history)):
             for i in range(len(self.path)-2):
                 src = self.path[i]
                 dst = self.path[i+1]
                 self.set_edge_color(src, dst, self.COLOR_PATH)
                 self.set_node_color(dst,  self.COLOR_PATH)
             self.set_edge_color(self.path[len(self.path)-2], self.path[len(self.path)-1],  self.COLOR_PATH)
+            self.counter_history += 1
             return False
         current_history = self.history[self.counter_history]
-        if (current_history[0]): #edges animation
-            current_history = current_history[1]
+        if (current_history[0] == 0): #current
             self.iteration += 1
+            current_history = current_history[1]
+            for n in current_history:
+                self.set_node_color(n[0], n[1])
+        elif (current_history[0] == 1): #edges animation
+            current_history = current_history[1]
             for e in current_history:
                 self.set_edge_color(e[0][0], e[0][1], e[1])
         else: #Vertex animation
             current_history = current_history[1]
             for n in current_history:
                 self.set_node_color(n[0], n[1])
-
+            
         self.counter_history +=1
         return False
 
@@ -138,7 +145,9 @@ class Algorithm:
                 break
             edge_history = []
             vertex_history = []
+            current_history = []
             if (current[1] != start and current[1] != goal):
+                current_history.append((current[1], self.COLOR_CURRENT))
                 vertex_history.append((current[1], self.COLOR_EXPLORED))
             neighbour = self.get_neighbors(current[1])
             for n in neighbour[0]:
@@ -154,12 +163,14 @@ class Algorithm:
                         self.path = current[2] + [n] 
                         self.cost = g
                         print("Cost of best path : "+str(self.cost))
-                        self.history.append((True, edge_history))
-                        self.history.append((False, vertex_history))
+                        self.history.append((0, current_history))
+                        self.history.append((1, edge_history))
+                        self.history.append((2, vertex_history))
                         return
                     g_scores[n] = g
-            self.history.append((True, edge_history))
-            self.history.append((False, vertex_history))
+            self.history.append((0, current_history))
+            self.history.append((1, edge_history))
+            self.history.append((2, vertex_history))
         if (len(self.path) == 0) :
             print("No solution")
         else:
@@ -212,7 +223,9 @@ class Algorithm:
                 break
             edge_history = []
             vertex_history = []
+            current_history = []
             if (current[1] != start and current[1] != goal):
+                current_history.append((current[1], self.COLOR_CURRENT))
                 vertex_history.append((current[1], self.COLOR_EXPLORED))
             neighbour = self.get_neighbors(current[1])
             for n in neighbour[0]:
@@ -231,14 +244,16 @@ class Algorithm:
                         self.cost = g_scores[n] + g_scores_other[n]
                         vertex_history.append((n, self.COLOR_BIDIRECTIONAL))
                         print("Cost of best path : "+str(self.cost))
-                        self.history.append((True, edge_history))
-                        self.history.append((False, vertex_history))
+                        self.history.append((0, current_history))
+                        self.history.append((1, edge_history))
+                        self.history.append((2, vertex_history))
                         print("Solution found")
                         return
                     if (n != toReach):
                         vertex_history.append((n, self.COLOR_NEIGHBOURED))
-            self.history.append((True, edge_history))
-            self.history.append((False, vertex_history))
+            self.history.append((0, current_history))
+            self.history.append((1, edge_history))
+            self.history.append((2, vertex_history))
             isFirst = not isFirst
         if (len(self.path) == 0) :
             print("No solution")

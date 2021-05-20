@@ -1,6 +1,6 @@
-#from AlgorithmManhattan import Algorithm
+from AlgorithmManhattan import Algorithm
 #from AlgorithmEuclidian import Algorithm
-from AlgorithmChebyshev import Algorithm
+#from AlgorithmChebyshev import Algorithm
 #from AlgorithmOctile import Algorithm
 
 

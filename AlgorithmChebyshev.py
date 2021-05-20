@@ -94,15 +94,16 @@ class Algorithm:
         updated constantly during each refresh of the view
         :return: void
         """
-        if (self.done):
+        if (self.counter_history > len(self.history)):
             return True
-        if (self.counter_history >= len(self.history)):
+        if (self.counter_history == len(self.history)):
             for i in range(len(self.path)-2):
                 src = self.path[i]
                 dst = self.path[i+1]
                 self.set_edge_color(src, dst, self.COLOR_PATH)
                 self.set_node_color(dst,  self.COLOR_PATH)
             self.set_edge_color(self.path[len(self.path)-2], self.path[len(self.path)-1],  self.COLOR_PATH)
+            self.counter_history += 1
             return False
         current_history = self.history[self.counter_history]
         if (current_history[0] == 0): #current

@@ -33,11 +33,11 @@ class View:
             text_iteration = "Iteration : "+str(self.algorithm.get_iteration())
         else:
             text_iteration = ""
-        self.iterations_label = plt.text(-5,0.2, text_iteration)
+        self.iterations_label = plt.text(-8,0.2, text_iteration)
         if (self.is_playing):
-            self.state_run = plt.text(-2,0.2, "Playing")
+            self.state_run = plt.text(-4,0.2, "Playing")
         else:
-            self.state_run = plt.text(-2,0.2, "Paused")
+            self.state_run = plt.text(-4,0.2, "Paused")
 
     def init_graph(self):
         self.ax.clear()
@@ -119,12 +119,22 @@ class View:
         def next(event):
             animate()
             plt.show()
+
+        def end(event):
+            self.is_playing = False
+            while(not self.algorithm.update()):
+                pass
+            animate()
+            plt.show()
         
-        self.button_play = widgets.Button(plt.axes([0.8,0,0.1,0.05]), "Play")
-        self.button_pause = widgets.Button(plt.axes([0.9,0,0.1,0.05]), "Pause")
-        self.button_next = widgets.Button(plt.axes([0.7,0,0.1,0.05]), "Next")
+        self.button_play = widgets.Button(plt.axes([0.7,0,0.1,0.05]), "Play")
+        self.button_pause = widgets.Button(plt.axes([0.8,0,0.1,0.05]), "Pause")
+        self.button_next = widgets.Button(plt.axes([0.6,0,0.1,0.05]), "Next")
+        self.button_end = widgets.Button(plt.axes([0.9,0,0.1,0.05]), "End")
+
 
         self.button_play.on_clicked(play)
         self.button_pause.on_clicked(pause)
         self.button_next.on_clicked(next)
+        self.button_end.on_clicked(end)
 

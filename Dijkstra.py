@@ -4,7 +4,7 @@ from View import View
 import heapq
 
 
-class Algorithm:
+class Dijkstra:
 
     COLOR_NEIGHBOURED = "#85fc23"
     COLOR_EXPLORED = "#65d6d2"
@@ -34,6 +34,7 @@ class Algorithm:
         self.counter_history = 0
         self.history = []
         self.path = []
+        self.done = False
         self.cost = 0
         self.iteration = 0
 

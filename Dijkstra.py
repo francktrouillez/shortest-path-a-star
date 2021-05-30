@@ -1,7 +1,7 @@
 from matplotlib.pyplot import hist
 from FileHandler import FileHandler
 from View import View
-import heapq
+import sys
 
 
 class Dijkstra:
@@ -14,9 +14,11 @@ class Dijkstra:
     COLOR_BIDIRECTIONAL = "#a834eb"
     COLOR_CURRENT = "#ff9d00"
 
+    UNDEFINED = -1
 
 
-    def __init__(self, dataset, is_bidirectional):
+
+    def __init__(self, dataset):
         fh = FileHandler(dataset)
         self.E, self.V, self.vertices, self.edges, self.edge_index, self.nodes = fh.read()
         # E is total number of edges
@@ -38,11 +40,8 @@ class Dijkstra:
         self.cost = 0
         self.iteration = 0
 
-        if(not is_bidirectional):
-            self.solve()
-        else:
-            self.solve_bidirectional()
-
+        self.solve()
+        
         self.view = View(self, label_edges=True, speed=500)
 
     def get_remaining_counter(self):
@@ -123,141 +122,72 @@ class Dijkstra:
         self.counter_history +=1
         return False
 
+    def getVertexWithMinimalDistance(self, distances, remainingNodes):
+        minNode = self.UNDEFINED
+        minValue = sys.maxsize
+        for node in distances:
+            if (node not in remainingNodes):
+                continue
+            if (distances[node] < minValue):
+                minNode = node
+                minValue = distances[node]
+        return minNode
+
+
     def solve(self):
         start = 0
         goal = 1
-        q = [(0, start, [start])]
-        heapq.heapify(q)
 
-        self.history = []
+        distances = {}
+        predecessors = {}
+        setOfVertices = set()
 
-        self.path = []
+        for v in self.vertices:
+            distances[v] = sys.maxsize
+            predecessors[v] = self.UNDEFINED
+            setOfVertices.add(v)
 
-        g_scores = {start: 0}
-        while len(q) != 0:
-            current = heapq.heappop(q)
-            if current[1] == goal:
-                self.path = current[2]
-                self.cost = g_scores[current[1]]
+        distances[start] = 0
+
+        while (len(setOfVertices) > 0):
+            current = self.getVertexWithMinimalDistance(distances, setOfVertices)
+            if (current == self.UNDEFINED):
+                print("Error undefined")
+                return
+            if (current == goal):
+                self.cost = distances[goal]
                 print("Cost of best path : "+str(self.cost))
                 break
+            setOfVertices.remove(current)
             edge_history = []
             vertex_history = []
             current_history = []
-            if (current[1] != start and current[1] != goal):
-                current_history.append((current[1], self.COLOR_CURRENT))
-                vertex_history.append((current[1], self.COLOR_EXPLORED))
-            neighbour = self.get_neighbors(current[1])
+            if (current != start and current != goal):
+                current_history.append((current, self.COLOR_CURRENT))
+                vertex_history.append((current, self.COLOR_EXPLORED))
+            neighbour = self.get_neighbors(current)
             for n in neighbour[0]:
-                edge = self.get_edge(current[1], n)
-                g = g_scores[current[1]] + edge[2] #weight
-                f = g + self.heuristic(n, goal)
-                if n not in g_scores or g < g_scores[n]:
-                    heapq.heappush(q, (f, n, current[2] + [n]))
-                    edge_history.append(((current[1], n), self.COLOR_EXPLORED))
+                if (n not in setOfVertices):
+                    continue
+                edge = self.get_edge(current, n)
+                potentialDistance = distances[current] + edge[2]
+                if (potentialDistance < distances[n]):
+                    distances[n] = potentialDistance
+                    predecessors[n] = current
+                    edge_history.append(((current, n), self.COLOR_EXPLORED))
                     if (n != goal):
                         vertex_history.append((n, self.COLOR_NEIGHBOURED))
-                    else:
-                        self.path = current[2] + [n] 
-                        self.cost = g
-                        print("Cost of best path : "+str(self.cost))
-                        self.history.append((0, current_history))
-                        self.history.append((1, edge_history))
-                        self.history.append((2, vertex_history))
-                        return
-                    g_scores[n] = g
             self.history.append((0, current_history))
             self.history.append((1, edge_history))
             self.history.append((2, vertex_history))
-        if (len(self.path) == 0) :
+        
+
+        if (predecessors[goal] == self.UNDEFINED):
             print("No solution")
         else:
-            print("Solution found")
-
-
-    def solve_bidirectional(self):
-        start = 0
-        goal = 1
-        q1 = [(0, start, [start])]
-        q2 = [(0, goal, [goal])]
-        heapq.heapify(q1)
-        heapq.heapify(q2)
-
-
-        self.history = []
-
-        self.path = []
-
-        g_scores_1 = {start: 0}
-        g_scores_2 = {goal: 0}
-        save_path_1 = {start : []}
-        save_path_2 = {goal : []}
-
-
-        isFirst = True
-        q = q1
-
-        while len(q) != 0:
-            if (isFirst):
-                q = q1
-                g_scores = g_scores_1
-                g_scores_other = g_scores_2
-                save_path = save_path_1
-                save_path_other = save_path_2
-                toReach = goal
-            else:
-                q = q2
-                g_scores = g_scores_2
-                g_scores_other = g_scores_1
-                save_path = save_path_2
-                save_path_other = save_path_1
-                toReach = start
-            current = heapq.heappop(q)
-            if current[1] == toReach:
-                save_path_other[current[1]].reverse()
-                self.path = current[2] + save_path_other[current[1]]
-                self.cost = g_scores[current[1]] + g_scores_other[current[1]]
-                print("Cost of best path : "+str(self.cost))
-                break
-            edge_history = []
-            vertex_history = []
-            current_history = []
-            if (current[1] != start and current[1] != goal):
-                current_history.append((current[1], self.COLOR_CURRENT))
-                vertex_history.append((current[1], self.COLOR_EXPLORED))
-            neighbour = self.get_neighbors(current[1])
-            for n in neighbour[0]:
-                edge = self.get_edge(current[1], n)
-                g = g_scores[current[1]] + edge[2] #weight
-                f = g + self.heuristic(n, goal)
-                if n not in g_scores or g < g_scores[n]:
-                    save_path[n] = current[2] + [n]
-                    heapq.heappush(q, (f, n, current[2] + [n]))
-                    edge_history.append(((current[1], n), self.COLOR_EXPLORED))
-                    
-                    g_scores[n] = g
-                    if (n in save_path_other):
-                        save_path_other[n].reverse()
-                        self.path = current[2] + save_path_other[n]
-                        self.cost = g_scores[n] + g_scores_other[n]
-                        vertex_history.append((n, self.COLOR_BIDIRECTIONAL))
-                        print("Cost of best path : "+str(self.cost))
-                        self.history.append((0, current_history))
-                        self.history.append((1, edge_history))
-                        self.history.append((2, vertex_history))
-                        print("Solution found")
-                        return
-                    if (n != toReach):
-                        vertex_history.append((n, self.COLOR_NEIGHBOURED))
-            self.history.append((0, current_history))
-            self.history.append((1, edge_history))
-            self.history.append((2, vertex_history))
-            isFirst = not isFirst
-        if (len(self.path) == 0) :
-            print("No solution")
-        else :
-            print("Solution found")
-
-    def heuristic(self, a, b):
-        return 0
-
+            path = []
+            current = goal
+            while (current != self.UNDEFINED):
+                path = [current] + path
+                current = predecessors[current]
+            self.path = path

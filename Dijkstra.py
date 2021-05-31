@@ -185,6 +185,7 @@ class Dijkstra:
         if (predecessors[goal] == self.UNDEFINED):
             print("No solution")
         else:
+            print("Solution found")
             path = []
             current = goal
             while (current != self.UNDEFINED):

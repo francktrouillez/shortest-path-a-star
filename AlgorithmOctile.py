@@ -1,8 +1,11 @@
+from math import sqrt
 from Algorithm import Algorithm
 from Algorithm import Algorithm
 
 
 class AlgorithmOctile(Algorithm):
+
+    CONSTANT_OCTILE = sqrt(2) - 2
 
     def heuristic(self, a, b):
         node_a = self.get_vertex(a)

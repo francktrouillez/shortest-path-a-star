@@ -11,5 +11,5 @@ class AlgorithmChebyshev(Algorithm):
         #Compute heuristic
 
 
-        return (dx + dy) - min(dx, dy)
+        return max(dx, dy)
 

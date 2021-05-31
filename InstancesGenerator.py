@@ -31,6 +31,44 @@ class InstancesGenerator:
         sortedNodes = sorted(nodes, key = lambda k: k[1])
         return sortedNodes
 
+    def linkNodes(self,edges, vertices):
+        markedNodes = []
+        openNodes = []
+
+        for i in vertices:
+            openNodes.append(i)
+        markedNodes.append(0)
+        openNodes.remove(0)
+
+        while( len(openNodes) != 0):
+            tempList=[]
+            newNodeMark = False
+            for i in markedNodes: #Search all the new nodes to mark
+                if(i not in tempList):
+                    tempList.append(i)
+                for e in edges:
+                    if (e[0] == i):
+                        if(e[1] not in tempList):
+                            tempList.append(e[1])
+                    elif (e[1] == i):
+                        if(e[0] not in tempList):
+                            tempList.append(e[0])
+
+            for element in tempList: #Add temp element marked to the definitive marked list
+                if(element in openNodes):
+                    markedNodes.append(element)
+                    openNodes.remove(element)
+                    newNodeMark = True
+            if(not newNodeMark and len(openNodes) !=0):
+                newNode = openNodes.pop()
+                closestNodes = self.getClosestNodes(vertices[newNode],vertices)
+                for i in range(0,len(closestNodes)):
+                    if(closestNodes[i][0] in markedNodes):
+                        edges.add((newNode,closestNodes[i][0])) #Add a link between the picked node and the closest node
+                        break
+                markedNodes.append(newNode)
+            tempList.clear()
+
 
 
     def generate(self, file, n_recursion = 0):
@@ -115,6 +153,8 @@ class InstancesGenerator:
                     new = e[1]
                     edges.remove(old)
                     edges.add(new)
+
+            self.linkNodes(edges,vertices)
             fileHandle = FileHandler(file_name=file)
             fileHandle.write(V, vertices, edges)
         

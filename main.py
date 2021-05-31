@@ -6,6 +6,8 @@ from Dijkstra import Dijkstra
 
 
 if __name__ == "__main__":
-    algorithm = AlgorithmEuclidian("datasets/1118_nodes.txt", False)
-    #dijkstra = Dijkstra("testInstance.txt")
+
+    algorithm = AlgorithmEuclidian("datasets/8439_nodes.txt", False)
+
+    dijkstra = Dijkstra("datasets/8439_nodes.txt")
 

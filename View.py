@@ -62,8 +62,14 @@ class View:
         if (self.sizeOfNodes < 50):
             self.showNodeLabels = False
 
+        self.width = 3
+
+        if (len(self.algorithm.get_vertices()) > 5000) :
+            self.sizeOfNodes = 5
+            self.width = 1
+
         nx.draw(self.G, nx.get_node_attributes(self.G, 'pos'), with_labels=self.showNodeLabels, node_color=node_colors,
-                node_size=self.sizeOfNodes, width=3, edge_color=edge_colors)
+                node_size=self.sizeOfNodes, width=self.width, edge_color=edge_colors)
         if self.label_edges:
             edge_labels = dict([((u, v,), d['weight'])
                                 for u, v, d in self.G.edges(data=True)])
@@ -87,7 +93,7 @@ class View:
                 node_colors.append(self.algorithm.get_neighbors(counter)[1])
                 counter += 1
             nx.draw(self.G, nx.get_node_attributes(self.G, 'pos'), with_labels=self.showNodeLabels, node_color=node_colors,
-                    node_size=self.sizeOfNodes, width=3, edge_color=edge_colors)
+                    node_size=self.sizeOfNodes, width=self.width, edge_color=edge_colors)
             if self.label_edges:
                 edge_labels = dict([((u, v,), d['weight'])
                                     for u, v, d in self.G.edges(data=True)])

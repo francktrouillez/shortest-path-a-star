@@ -2,7 +2,7 @@ from AlgorithmManhattan import Algorithm
 from Algorithm import Algorithm
 
 
-class AlgorithmEuclidan(Algorithm):
+class AlgorithmEuclidian(Algorithm):
 
     def heuristic(self, a, b):
         node_a = self.get_vertex(a)

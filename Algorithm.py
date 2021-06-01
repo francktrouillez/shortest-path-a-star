@@ -3,6 +3,9 @@ from FileHandler import FileHandler
 from View import View
 import heapq
 
+import threading
+import time
+
 
 class Algorithm:
 
@@ -16,7 +19,7 @@ class Algorithm:
 
 
 
-    def __init__(self, dataset, is_bidirectional):
+    def __init__(self, dataset, is_bidirectional, is_using_multithreading):
         fh = FileHandler(dataset)
         self.E, self.V, self.vertices, self.edges, self.edge_index, self.nodes = fh.read()
         # E is total number of edges
@@ -37,10 +40,18 @@ class Algorithm:
         self.cost = 0
         self.iteration = 0
 
+        start = time.time()
+
         if(not is_bidirectional):
             self.solve()
         else:
-            self.solve_bidirectional()
+            if (is_using_multithreading):
+                self.solve_bidirectional_multi()
+            else:
+                self.solve_bidirectional()
+
+        end = time.time()
+        print(end-start)
 
         self.remove_bad_history()
 
@@ -198,6 +209,135 @@ class Algorithm:
             print("No solution")
         else:
             print("Solution found")
+
+    def solve_bidirectional_multi(self):
+
+        mutex_already_found = threading.Lock()
+        mutex_history = threading.Lock()   
+        self.already_found = False
+
+        def processData(start, goal, q, g_scores, g_scores_other, save_path, save_path_other, mutex_path, mutex_path_other):
+            counter = 0
+            while (len(q) != 0 and not self.already_found):
+                counter += 1
+                current = heapq.heappop(q)
+                if current[1] in save_path_other:
+                    mutex_already_found.acquire()
+                    if (not self.already_found):
+                        self.already_found = True
+                        save_path_other[current[1]].reverse()
+                        self.path = current[2] + save_path_other[current[1]]
+                        self.cost = g_scores[current[1]] + g_scores_other[current[1]]
+                        print("Cost of best path : "+str(self.cost))
+                    mutex_already_found.release()
+                    break
+                edge_history = []
+                vertex_history = []
+                current_history = []
+                if (current[1] != start and current[1] != goal):
+                    current_history.append((current[1], self.COLOR_CURRENT))
+                    vertex_history.append((current[1], self.COLOR_EXPLORED))
+                neighbour = self.get_neighbors(current[1])
+                for n in neighbour[0]:
+                    edge = self.get_edge(current[1], n)
+                    g = g_scores[current[1]] + edge[2] #weight
+                    f = g + self.heuristic(n, goal)
+                    if n not in g_scores or g < g_scores[n]:
+                        mutex_path.acquire()
+                        save_path[n] = current[2] + [n]
+                        mutex_path.release()
+                        heapq.heappush(q, (f, n, current[2] + [n]))
+                        edge_history.append(((current[1], n), self.COLOR_EXPLORED))
+                        
+                        g_scores[n] = g
+                        mutex_path_other.acquire()
+                        if (n in save_path_other):
+                            mutex_already_found.acquire()
+                            if (not self.already_found):
+                                self.already_found = True
+                                save_path_other[n].reverse()
+                                self.path = current[2] + save_path_other[n]
+                                self.cost = g_scores[n] + g_scores_other[n]
+                                vertex_history.append((n, self.COLOR_BIDIRECTIONAL))
+                                print("Cost of best path : "+str(self.cost))
+                                mutex_history.acquire()
+                                self.history.append((0, current_history))
+                                self.history.append((1, edge_history))
+                                self.history.append((2, vertex_history))
+                                mutex_history.release()
+                                print("Solution found")
+                            mutex_already_found.release()
+                            mutex_path_other.release()
+                            return
+                        mutex_path_other.release()
+                        if (n != goal):
+                            vertex_history.append((n, self.COLOR_NEIGHBOURED))
+                mutex_history.acquire()
+                self.history.append((0, current_history))
+                self.history.append((1, edge_history))
+                self.history.append((2, vertex_history))
+                mutex_history.release()
+            
+
+        start = 0
+        goal = 1
+        q1 = [(0, start, [start])]
+        q2 = [(0, goal, [goal])]
+        heapq.heapify(q1)
+        heapq.heapify(q2)
+
+
+        self.history = []
+
+        self.path = []
+
+        g_scores_1 = {start: 0}
+        g_scores_2 = {goal: 0}
+        save_path_1 = {start : []}
+        save_path_2 = {goal : []}
+
+        mutex_path_1 = threading.Lock()
+        mutex_path_2 = threading.Lock()
+
+        t1 = threading.Thread(target = processData, args=(start, goal, q1, g_scores_1, g_scores_2, save_path_1, save_path_2, mutex_path_1, mutex_path_2))
+        t2 = threading.Thread(target = processData, args=(goal, start, q2, g_scores_2, g_scores_1, save_path_2, save_path_1, mutex_path_2, mutex_path_1))
+        t1.start()
+        t2.start()
+
+        t1.join()
+        t2.join()
+
+        """if (iteration2 < iteration1):
+            
+            for i in range(iteration2):
+                for j in range(3):
+                    self.history.append(history_1[3*i + j])
+                for j in range(3):
+                    self.history.append(history_2[3*i + j])
+            for i in range(iteration2, iteration1):
+                for j in range(3):
+                    self.history.append(history_1[3*i + j])
+        elif (iteration1 < iteration2):
+            for i in range(iteration1):
+                for j in range(3):
+                    self.history.append(history_2[3*i + j])
+                for j in range(3):
+                    self.history.append(history_1[3*i + j])
+            for i in range(iteration1, iteration2):
+                for j in range(3):
+                    self.history.append(history_2[3*i + j])
+        else:
+            for i in range(iteration1):
+                for j in range(3):
+                    self.history.append(history_1[3*i + j])
+                for j in range(3):
+                    self.history.append(history_2[3*i + j])"""
+        
+
+        
+
+
+        
 
 
     def solve_bidirectional(self):

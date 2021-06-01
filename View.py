@@ -108,7 +108,7 @@ class View:
             self.algorithm.update()
             update_graph()
             
-        def playThread():
+        def play_thread():
             time.sleep(self.speed/1000)
             while(self.is_playing and self.algorithm.get_remaining_counter() > 0):
                 animate()
@@ -122,7 +122,7 @@ class View:
                 return
             self.is_playing = True
             self.is_thread_alive = True
-            thread = threading.Thread(target = playThread)
+            thread = threading.Thread(target = play_thread)
             thread.start()
 
         def pause(event):

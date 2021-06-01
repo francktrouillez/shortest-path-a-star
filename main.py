@@ -7,7 +7,7 @@ from Dijkstra import Dijkstra
 
 if __name__ == "__main__":
 
-    algorithm = AlgorithmEuclidian("datasets/1118_nodes.txt", False)
+    algorithm = AlgorithmEuclidian("datasets/example", True)
 
-    dijkstra = Dijkstra("datasets/1118_nodes.txt")
+    dijkstra = Dijkstra("datasets/example")
 

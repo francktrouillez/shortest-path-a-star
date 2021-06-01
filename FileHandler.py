@@ -55,16 +55,16 @@ class FileHandler:
         return E, V, vertices, edges, edge_index, neighbors
 
     def write(self, V, vertices, edges):
-        toWrite = str(V)+'\n'
+        to_write = str(V)+'\n'
         for i in vertices:
-            currentPos = vertices[i]
-            line = str(i) + " " + str(currentPos[0]) + " " + str(currentPos[1])
-            toWrite += line + '\n'
+            current_pos = vertices[i]
+            line = str(i) + " " + str(current_pos[0]) + " " + str(current_pos[1])
+            to_write += line + '\n'
         
         for e in edges:
             line = str(e[0]) + " " + str(e[1])
-            toWrite += line + '\n'
+            to_write += line + '\n'
 
         f = open(self.file_name, "w")
-        f.write(toWrite)
+        f.write(to_write)
         f.close()

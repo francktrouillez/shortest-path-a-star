@@ -51,7 +51,7 @@ class Dijkstra:
             if (len(h[1]) > 0):
                 real_history.append(h)
         self.history = real_history 
-        
+
     def get_remaining_counter(self):
         return len(self.history) - self.counter_history + 1
 
@@ -155,16 +155,16 @@ class Dijkstra:
         self.counter_history +=1
         return self.counter_history
 
-    def getVertexWithMinimalDistance(self, distances, remainingNodes):
-        minNode = self.UNDEFINED
-        minValue = sys.maxsize
+    def get_vertex_with_minimal_distance(self, distances, remaining_nodes):
+        min_node = self.UNDEFINED
+        min_value = sys.maxsize
         for node in distances:
-            if (node not in remainingNodes):
+            if (node not in remaining_nodes):
                 continue
-            if (distances[node] < minValue):
-                minNode = node
-                minValue = distances[node]
-        return minNode
+            if (distances[node] < min_value):
+                min_node = node
+                min_value = distances[node]
+        return min_node
 
 
     def solve(self):
@@ -173,17 +173,17 @@ class Dijkstra:
 
         distances = {}
         predecessors = {}
-        setOfVertices = set()
+        set_of_vertices = set()
 
         for v in self.vertices:
             distances[v] = sys.maxsize
             predecessors[v] = self.UNDEFINED
-            setOfVertices.add(v)
+            set_of_vertices.add(v)
 
         distances[start] = 0
 
-        while (len(setOfVertices) > 0):
-            current = self.getVertexWithMinimalDistance(distances, setOfVertices)
+        while (len(set_of_vertices) > 0):
+            current = self.get_vertex_with_minimal_distance(distances, set_of_vertices)
             if (current == self.UNDEFINED):
                 print("Error undefined")
                 return
@@ -191,7 +191,7 @@ class Dijkstra:
                 self.cost = distances[goal]
                 print("Cost of best path : "+str(self.cost))
                 break
-            setOfVertices.remove(current)
+            set_of_vertices.remove(current)
             edge_history = []
             vertex_history = []
             current_history = []
@@ -200,12 +200,12 @@ class Dijkstra:
                 vertex_history.append((current, self.COLOR_EXPLORED))
             neighbour = self.get_neighbors(current)
             for n in neighbour[0]:
-                if (n not in setOfVertices):
+                if (n not in set_of_vertices):
                     continue
                 edge = self.get_edge(current, n)
-                potentialDistance = distances[current] + edge[2]
-                if (potentialDistance < distances[n]):
-                    distances[n] = potentialDistance
+                potential_distance = distances[current] + edge[2]
+                if (potential_distance < distances[n]):
+                    distances[n] = potential_distance
                     predecessors[n] = current
                     edge_history.append(((current, n), self.COLOR_EXPLORED))
                     if (n != goal):

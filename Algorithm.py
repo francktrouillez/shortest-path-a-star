@@ -219,26 +219,26 @@ class Algorithm:
         save_path_2 = {goal : []}
 
 
-        isFirst = True
+        is_first = True
         q = q1
 
         while len(q) != 0:
-            if (isFirst):
+            if (is_first):
                 q = q1
                 g_scores = g_scores_1
                 g_scores_other = g_scores_2
                 save_path = save_path_1
                 save_path_other = save_path_2
-                toReach = goal
+                to_reach = goal
             else:
                 q = q2
                 g_scores = g_scores_2
                 g_scores_other = g_scores_1
                 save_path = save_path_2
                 save_path_other = save_path_1
-                toReach = start
+                to_reach = start
             current = heapq.heappop(q)
-            if current[1] == toReach:
+            if current[1] in save_path_other:
                 save_path_other[current[1]].reverse()
                 self.path = current[2] + save_path_other[current[1]]
                 self.cost = g_scores[current[1]] + g_scores_other[current[1]]
@@ -272,12 +272,12 @@ class Algorithm:
                         self.history.append((2, vertex_history))
                         print("Solution found")
                         return
-                    if (n != toReach):
+                    if (n != to_reach):
                         vertex_history.append((n, self.COLOR_NEIGHBOURED))
             self.history.append((0, current_history))
             self.history.append((1, edge_history))
             self.history.append((2, vertex_history))
-            isFirst = not isFirst
+            is_first = not is_first
         if (len(self.path) == 0) :
             print("No solution")
         else :

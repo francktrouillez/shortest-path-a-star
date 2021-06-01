@@ -4,6 +4,7 @@ import matplotlib.animation as animation
 import matplotlib.widgets as widgets
 import time
 import threading
+import copy
 # from pyvis.network import Network
 
 
@@ -20,6 +21,8 @@ class View:
             self.G.add_edge(e[0], e[1], color=e[3], weight=e[2])
         if (len(self.algorithm.get_vertices()) <= 100):
             self.pos = nx.spring_layout(self.G, pos=self.algorithm.get_vertices(), fixed=self.algorithm.get_vertices())
+        
+        self.save_init_config = (copy.deepcopy(self.algorithm.get_edges()), copy.deepcopy(self.algorithm.get_nodes()))
         self.is_playing = False
         self.is_thread_alive = False
         self.init_graph()
@@ -35,9 +38,9 @@ class View:
             text_iteration = ""
         self.iterations_label = plt.text(-8,0.2, text_iteration)
         if (self.is_playing):
-            self.state_run = plt.text(-4,0.2, "Playing")
+            self.state_run = plt.text(-5,0.2, "Playing")
         else:
-            self.state_run = plt.text(-4,0.2, "Paused")
+            self.state_run = plt.text(-5,0.2, "Paused")
 
     def init_graph(self):
         self.ax.clear()
@@ -77,8 +80,8 @@ class View:
         
 
     def init_buttons(self):
-        def animate():
-            self.algorithm.update()
+
+        def update_graph():
             self.ax.clear()
             plt.clf()
             plt.cla()
@@ -100,6 +103,10 @@ class View:
                 nx.draw_networkx_edge_labels(self.G, self.pos, edge_labels=edge_labels, font_size=6)
             self.init_buttons()
             self.init_labels()
+
+        def animate():
+            self.algorithm.update()
+            update_graph()
             
         def playThread():
             time.sleep(self.speed/1000)
@@ -123,12 +130,27 @@ class View:
             self.state_run.set_text("Paused")
             plt.show()
         def next(event):
+            if (self.is_playing):
+                return
             animate()
             plt.show()
 
+        def back(event):
+            if (self.is_playing):
+                return
+            target_counter_history = self.algorithm.get_counter_history() - 1
+            self.algorithm.reinitialize_history(copy.deepcopy(self.save_init_config))
+            if (target_counter_history <= 1):
+                update_graph()
+                plt.show()
+                return
+            while (self.algorithm.update() < target_counter_history):
+                pass
+            update_graph()
+            plt.show()
         def end(event):
             self.is_playing = False
-            while(not self.algorithm.update()):
+            while(self.algorithm.update() < self.algorithm.get_length_history()):
                 pass
             animate()
             plt.show()
@@ -136,11 +158,13 @@ class View:
         self.button_play = widgets.Button(plt.axes([0.7,0,0.1,0.05]), "Play")
         self.button_pause = widgets.Button(plt.axes([0.8,0,0.1,0.05]), "Pause")
         self.button_next = widgets.Button(plt.axes([0.6,0,0.1,0.05]), "Next")
+        self.button_back = widgets.Button(plt.axes([0.5,0,0.1,0.05]), "Back")
         self.button_end = widgets.Button(plt.axes([0.9,0,0.1,0.05]), "End")
 
 
         self.button_play.on_clicked(play)
         self.button_pause.on_clicked(pause)
         self.button_next.on_clicked(next)
+        self.button_back.on_clicked(back)
         self.button_end.on_clicked(end)
 

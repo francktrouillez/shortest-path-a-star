@@ -36,16 +36,40 @@ class Dijkstra:
         self.counter_history = 0
         self.history = []
         self.path = []
-        self.done = False
         self.cost = 0
         self.iteration = 0
 
         self.solve()
-        
+
+        self.remove_bad_history()
+
         self.view = View(self, label_edges=True, speed=500)
 
+    def remove_bad_history(self):
+        real_history = []
+        for h in self.history:
+            if (len(h[1]) > 0):
+                real_history.append(h)
+        self.history = real_history 
+        
     def get_remaining_counter(self):
         return len(self.history) - self.counter_history + 1
+
+    def get_length_history(self):
+        return len(self.history)
+    
+    def get_counter_history(self):
+        return self.counter_history
+
+    def reinitialize_history(self, data):
+        self.iteration = 0
+        self.counter_history = 0
+        edges, nodes = data
+        self.edges = edges
+        self.nodes = nodes
+    
+    def get_nodes(self):
+        return self.nodes
 
     def get_iteration(self):
         return self.iteration
@@ -94,7 +118,7 @@ class Dijkstra:
         :return: void
         """
         if (self.counter_history > len(self.history)):
-            return True
+            return self.counter_history
         if (self.counter_history == len(self.history)):
             for i in range(len(self.path)-2):
                 src = self.path[i]
@@ -103,24 +127,33 @@ class Dijkstra:
                 self.set_node_color(dst,  self.COLOR_PATH)
             self.set_edge_color(self.path[len(self.path)-2], self.path[len(self.path)-1],  self.COLOR_PATH)
             self.counter_history += 1
-            return False
+            return self.counter_history
         current_history = self.history[self.counter_history]
         if (current_history[0] == 0): #current
             self.iteration += 1
             current_history = current_history[1]
+            if (len(current_history) == 0):
+                self.counter_history += 1
+                return self.update()
             for n in current_history:
                 self.set_node_color(n[0], n[1])
         elif (current_history[0] == 1): #edges animation
             current_history = current_history[1]
+            if (len(current_history) == 0):
+                self.counter_history += 1
+                return self.update()
             for e in current_history:
                 self.set_edge_color(e[0][0], e[0][1], e[1])
         else: #Vertex animation
             current_history = current_history[1]
+            if (len(current_history) == 0):
+                self.counter_history += 1
+                return self.update()
             for n in current_history:
                 self.set_node_color(n[0], n[1])
             
         self.counter_history +=1
-        return False
+        return self.counter_history
 
     def getVertexWithMinimalDistance(self, distances, remainingNodes):
         minNode = self.UNDEFINED

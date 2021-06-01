@@ -19,7 +19,7 @@ class Algorithm:
 
 
 
-    def __init__(self, dataset, is_bidirectional, is_using_multithreading):
+    def __init__(self, dataset, is_bidirectional, is_using_multithreading = False):
         fh = FileHandler(dataset)
         self.E, self.V, self.vertices, self.edges, self.edge_index, self.nodes = fh.read()
         # E is total number of edges
@@ -51,7 +51,7 @@ class Algorithm:
                 self.solve_bidirectional()
 
         end = time.time()
-        print(end-start)
+        print("Time elapsed (ms) : "+str(int((end-start)*1000*1000)/1000))
 
         self.remove_bad_history()
 

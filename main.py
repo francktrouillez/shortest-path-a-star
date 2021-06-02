@@ -1,6 +1,6 @@
 from AlgorithmEuclidian import AlgorithmEuclidian
 from AlgorithmChebyshev import AlgorithmChebyshev
-from AlgorithmOctile import AlgorithmOctile
+from AlgorithmMean import AlgorithmMean
 from Dijkstra import Dijkstra
 
 
@@ -12,7 +12,7 @@ if __name__ == "__main__":
 
     algorithm = AlgorithmChebyshev(input_file, False)
 
-    algorithm = AlgorithmOctile(input_file, False)
+    algorithm = AlgorithmMean(input_file, False)
 
-    #dijkstra = Dijkstra(input_file)
+    dijkstra = Dijkstra(input_file)
 

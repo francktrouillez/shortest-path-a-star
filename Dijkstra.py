@@ -220,7 +220,6 @@ class Dijkstra:
             self.history.append((1, edge_history))
             self.history.append((2, vertex_history))
         
-
         if (predecessors[goal] == self.UNDEFINED):
             print("No solution")
         else:

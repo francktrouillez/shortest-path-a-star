@@ -31,6 +31,7 @@ class InstancesGenerator:
         sortedNodes = sorted(nodes, key = lambda k: k[1])
         return sortedNodes
 
+
     def linkNodes(self,edges, vertices):
         markedNodes = []
         openNodes = []

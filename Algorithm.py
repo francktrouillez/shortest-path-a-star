@@ -197,6 +197,8 @@ class Algorithm:
                 g = g_scores[current[1]] + edge[2] #weight
                 f = g + self.heuristic(n, goal)
                 if n not in g_scores or g < g_scores[n]:
+                    if (n == 148):
+                        print(g, f, self.heuristic(n, goal))
                     heapq.heappush(q, (f, n, current[2] + [n]))
                     edge_history.append(((current[1], n), self.COLOR_EXPLORED))
                     if (n != goal):

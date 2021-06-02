@@ -1,6 +1,5 @@
 from math import sqrt
 from Algorithm import Algorithm
-from Algorithm import Algorithm
 
 
 class AlgorithmOctile(Algorithm):
@@ -15,5 +14,7 @@ class AlgorithmOctile(Algorithm):
         #Compute heuristic
 
 
-        return (dx + dy) + self.CONSTANT_OCTILE * min(dx, dy)
+        return (dx + dy) + (sqrt(2) - 2) * min(dx, dy)
+        
+        #return (dx + dy) + self.CONSTANT_OCTILE * min(dx, dy)
 

@@ -1,4 +1,3 @@
-from AlgorithmManhattan import AlgorithmManhattan
 from AlgorithmEuclidian import AlgorithmEuclidian
 from AlgorithmChebyshev import AlgorithmChebyshev
 from AlgorithmOctile import AlgorithmOctile
@@ -7,13 +6,13 @@ from Dijkstra import Dijkstra
 
 if __name__ == "__main__":
 
-    algorithm = AlgorithmEuclidian("datasets/1118_nodes.txt", False)
+    input_file = "datasets/8439_nodes.txt"
 
-    algorithm = AlgorithmEuclidian("datasets/1118_nodes.txt", True, False)
+    algorithm = AlgorithmEuclidian(input_file, False)
 
-    algorithm = AlgorithmEuclidian("datasets/1118_nodes.txt", True, True)
+    algorithm = AlgorithmChebyshev(input_file, False)
 
+    algorithm = AlgorithmOctile(input_file, False)
 
-
-    dijkstra = Dijkstra("datasets/1118_nodes.txt")
+    #dijkstra = Dijkstra(input_file)
 

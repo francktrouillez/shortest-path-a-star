@@ -75,12 +75,12 @@ class InstancesGenerator:
         V = self.numberOfNodes
         vertices = {}
 
-        posX = random.randint(self.minX, (self.maxX-self.minX)/2 + self.minX)
-        posY = random.randint(self.minY, (self.maxY-self.minY)/2 + self.minY)
+        posX = random.randint(self.minX, int((self.maxX-self.minX)/3) + self.minX)
+        posY = random.randint(self.minY, int((self.maxY-self.minY)/3) + self.minY)
         vertices[0] = (posX, posY)
 
-        posX = random.randint((self.maxX-self.minX)/2 + self.minX, self.maxX)
-        posY = random.randint((self.maxY-self.minY)/2 + self.minY, self.maxY)
+        posX = random.randint(int(2*(self.maxX-self.minX)/3) + self.minX, self.maxX)
+        posY = random.randint(int(2*(self.maxY-self.minY)/3) + self.minY, self.maxY)
         vertices[1] = (posX, posY)
 
         for i in range(2, V):

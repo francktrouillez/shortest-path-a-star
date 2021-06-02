@@ -1,4 +1,3 @@
-from AlgorithmManhattan import Algorithm
 from Algorithm import Algorithm
 
 

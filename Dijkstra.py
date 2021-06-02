@@ -2,6 +2,7 @@ from matplotlib.pyplot import hist
 from FileHandler import FileHandler
 from View import View
 import sys
+import time
 
 
 class Dijkstra:
@@ -39,7 +40,12 @@ class Dijkstra:
         self.cost = 0
         self.iteration = 0
 
+        start = time.time()
+
         self.solve()
+
+        end = time.time()
+        print("Time elapsed (ms) : "+str(int((end-start)*1000*1000)/1000))
 
         self.remove_bad_history()
 

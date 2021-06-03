@@ -1,5 +1,7 @@
 # INFO-H410 Project
 
+Project conducted by Alexandre MISSENARD, Andrey SOBOLEVSKY and Franck TROUILLEZ.
+
 This project has the aim to implement an A* algorithm for the shortest path problem in a nodes graph. The A* algorithm is implemented in `Algorithm`. 
 
 3 sub-classes are created to define the heuristics. 

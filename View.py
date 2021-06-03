@@ -5,10 +5,13 @@ import matplotlib.widgets as widgets
 import time
 import threading
 import copy
-# from pyvis.network import Network
 
 
 class View:
+    """
+    Class used for the GUI of the project
+    """
+
     def __init__(self, algorithm, label_edges=True, speed=1000):
         self.algorithm = algorithm
         self.label_edges = label_edges

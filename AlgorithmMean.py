@@ -1,4 +1,3 @@
-from math import sqrt
 from Algorithm import Algorithm
 
 
@@ -10,6 +9,6 @@ class AlgorithmMean(Algorithm):
         node_b = self.get_vertex(b)
         dx = abs(node_a[0] - node_b[0])
         dy = abs(node_a[1] - node_b[1])
-        #Compute heuristic
+
         return (dx + dy)/2
 

@@ -3,6 +3,9 @@ from hashlib import new
 import random
 
 class InstancesGenerator:
+    """
+    This class allows to generate instances with given parameters
+    """
 
     def __init__(self, numberOfNodes, minX = 0, minY = 0, maxX = 50, maxY = 50, probabilityOfStrangeMove = 0.05, minConnexions = 1, maxConnexions = 5, minRadius = 5, maxRadius = 20):
         self.numberOfNodes = numberOfNodes
@@ -17,22 +20,31 @@ class InstancesGenerator:
         self.maxRadius = maxRadius
 
 
-    def getEuclidianDistance(self, a, b):
+    def getEuclideanDistance(self, a, b):
+        """
+        Gives the euclidean distance between two nodes
+        """
         return ((a[0] - b[0])**2 + (a[1] - b[1])**2)**(1/2)
 
     def getClosestNodes(self, node, vertices):
+        """
+        Give the list of nodes sorted by distance
+        """
         nodes = []
         for i in vertices:
             v = vertices[i]
             if (v == node):
                 continue
-            nodes.append((i, self.getEuclidianDistance(v, node)))
+            nodes.append((i, self.getEuclideanDistance(v, node)))
 
         sortedNodes = sorted(nodes, key = lambda k: k[1])
         return sortedNodes
 
 
     def linkNodes(self,edges, vertices):
+        """
+        Create the edges between the nodes
+        """
         markedNodes = []
         openNodes = []
 
@@ -73,6 +85,9 @@ class InstancesGenerator:
 
 
     def generate(self, file, n_recursion = 0):
+        """
+        Generate the instance
+        """
         V = self.numberOfNodes
         vertices = {}
 

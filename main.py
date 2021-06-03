@@ -1,4 +1,4 @@
-from AlgorithmEuclidian import AlgorithmEuclidian
+from AlgorithmEuclidean import AlgorithmEuclidean
 from AlgorithmChebyshev import AlgorithmChebyshev
 from AlgorithmMean import AlgorithmMean
 from Dijkstra import Dijkstra
@@ -6,9 +6,9 @@ from Dijkstra import Dijkstra
 
 if __name__ == "__main__":
 
-    input_file = "datasets/8439_nodes.txt"
+    input_file = "datasets/20_nodes.txt"
 
-    algorithm = AlgorithmEuclidian(input_file, False)
+    algorithm = AlgorithmEuclidean(input_file, False)
 
     algorithm = AlgorithmChebyshev(input_file, False)
 

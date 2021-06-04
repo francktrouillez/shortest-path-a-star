@@ -287,6 +287,7 @@ class Algorithm:
         self.already_found = False
 
         def processData(start, goal, q, g_scores, g_scores_other, save_path, save_path_other, mutex_path, mutex_path_other):
+            print(start)
             counter = 0
             while (len(q) != 0 and not self.already_found):
                 counter += 1
@@ -300,6 +301,7 @@ class Algorithm:
                         self.cost = g_scores[current[1]] + g_scores_other[current[1]]
                         print("Cost of best path : "+str(self.cost))
                     mutex_already_found.release()
+                    print(counter, start)
                     break
                 edge_history = []
                 vertex_history = []
@@ -338,6 +340,7 @@ class Algorithm:
                                 print("Solution found")
                             mutex_already_found.release()
                             mutex_path_other.release()
+                            print(counter, start)
                             return
                         mutex_path_other.release()
                         if (n != goal):
@@ -347,6 +350,7 @@ class Algorithm:
                 self.history.append((1, edge_history))
                 self.history.append((2, vertex_history))
                 mutex_history.release()
+            print(counter, start)
             
 
         start = 0

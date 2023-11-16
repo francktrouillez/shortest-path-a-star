@@ -9,7 +9,7 @@ import time
 
 class Algorithm:
     """
-    Algorithm of A*, it generates the shortest path for the given instance and shows the result using a GUI 
+    Algorithm of A*, it generates the shortest path for the given instance and shows the result using a GUI
     """
 
     COLOR_NEIGHBOURED = "#85fc23"
@@ -77,7 +77,7 @@ class Algorithm:
         for h in self.history:
             if (len(h[1]) > 0):
                 real_history.append(h)
-        self.history = real_history 
+        self.history = real_history
 
     def get_remaining_counter(self):
         """
@@ -90,7 +90,7 @@ class Algorithm:
         Get the length of the history (graphical aspect only)
         """
         return len(self.history)
-    
+
     def get_counter_history(self):
         """
         Get the counter_history (graphical aspect only)
@@ -106,8 +106,8 @@ class Algorithm:
         edges, nodes = data
         self.edges = edges
         self.nodes = nodes
-    
-    
+
+
 
 
     def update(self):
@@ -140,7 +140,7 @@ class Algorithm:
             current_history = current_history[1]
             for n in current_history:
                 self.set_node_color(n[0], n[1])
-            
+
         self.counter_history +=1
         return self.counter_history
 
@@ -253,7 +253,7 @@ class Algorithm:
                     save_path[n] = current[2] + [n]
                     heapq.heappush(q, (f, n, current[2] + [n]))
                     edge_history.append(((current[1], n), self.COLOR_EXPLORED))
-                    
+
                     g_scores[n] = g
                     if (n in save_path_other):
                         save_path_other[n].reverse()
@@ -283,7 +283,7 @@ class Algorithm:
         """
 
         mutex_already_found = threading.Lock()
-        mutex_history = threading.Lock()   
+        mutex_history = threading.Lock()
         self.already_found = False
 
         def processData(start, goal, q, g_scores, g_scores_other, save_path, save_path_other, mutex_path, mutex_path_other):
@@ -320,7 +320,7 @@ class Algorithm:
                         mutex_path.release()
                         heapq.heappush(q, (f, n, current[2] + [n]))
                         edge_history.append(((current[1], n), self.COLOR_EXPLORED))
-                        
+
                         g_scores[n] = g
                         mutex_path_other.acquire()
                         if (n in save_path_other):
@@ -351,7 +351,7 @@ class Algorithm:
                 self.history.append((2, vertex_history))
                 mutex_history.release()
             print(counter, start)
-            
+
 
         start = 0
         goal = 1
@@ -381,7 +381,7 @@ class Algorithm:
         t1.join()
         t2.join()
 
-        
+
     def get_nodes(self):
         return self.nodes
 
@@ -429,10 +429,10 @@ class Algorithm:
     def get_vertex(self, id):
         return self.vertices[id]
 
-        
 
 
-    
+
+
 
     def heuristic(self, a, b):
         return 0

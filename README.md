@@ -26,11 +26,11 @@ This project aims at implement A* algorithms for the shortest path problem in a 
 - Chebyshev distance
 - Euclidean distance
 
-
 For each heuristic, the algorithm is run with a unidirectional search, and a bidirectional search, which is a new way to implement A*. The bidirectional search is implemented in order to allow parallelization of the searches. However, even if the solution is found faster, it doesn't ensure its optimality anymore.
 
 The algorithm is tested on different instances generated ourselves. The instances are generated with a random number of nodes, and a random number of edges. The edges are generated with a random weight, and a random direction.
 
+![description](/images/description.png)
 
 ## Architecture
 
